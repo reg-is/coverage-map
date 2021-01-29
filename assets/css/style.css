@@ -1,0 +1,12 @@
+
+/* Leaflet */
+#testmapid { height: 300px; }
+#coveragemapid { height: 600px;}
+
+/* Card collapse */
+.card-header .fa {
+    transition: .3s transform ease-in-out;
+  }
+.card-header .collapsed .fa {
+    transform: rotate(90deg);
+  }
