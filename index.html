@@ -1,6 +1,7 @@
 <!doctype html>
 
 <html lang="de">
+
 <head>
 
   <meta charset="utf-8">
@@ -17,18 +18,20 @@
 
   <!-- Leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
-   integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
-   crossorigin=""/>
+    integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+    crossorigin="" />
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
-   integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
-   crossorigin=""></script>
+    integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+    crossorigin=""></script>
 
   <!-- FONTAWESOME -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 
   <!-- jQuery & jQuery UI-->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+    integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
 
   <!-- Bootstrap 4 -->
   <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
@@ -59,7 +62,7 @@
     <br />
     <a href="https://my.makesmart.net/"><button type="button" class="btn btn-primary">Join</button></a> -->
 
- 
+
     <div class="card">
       <h5 class="card-header">
         <!-- Colapsable Card based on https://disjfa.github.io/bootstrap-tricks/card-collapse-tricks/ -->
@@ -82,6 +85,16 @@
                 </div>
               </div>
             </div>
+            <!-- Form: Show/Hide Beacons Location -->
+            <div class="card bg-light">
+              <div class="card-body">
+                <label class="font-weight-bold">Display Beacons Location</label>
+                <div class="custom-control custom-switch">
+                  <input type="checkbox" class="custom-control-input" id="beaconSwitch">
+                  <label class="custom-control-label" for="beaconSwitch" id="beaconSwitchLabel">Off</label>
+                </div>
+              </div>
+            </div>
             <!-- Form Select Data to display -->
             <div class="card bg-light">
               <div class="card-body">
@@ -94,7 +107,8 @@
                 </div>
                 <div class="form-check">
                   <label class="form-check-label">
-                    <input type="radio" class="form-check-input" name="dataRadio" id="radioRSSI" value="RSSI">RSSI <small>(Received
+                    <input type="radio" class="form-check-input" name="dataRadio" id="radioRSSI" value="RSSI">RSSI
+                    <small>(Received
                       Signal Strength Indication)</small>
                   </label>
                 </div>
@@ -107,14 +121,14 @@
                 <div class="form-group row">
                   <label for="thMin" class="col-md-auto col-form-label">Min:</label>
                   <div class="col-md">
-                    <input type="text" class="form-control" id="thMin"  maxlength="3" inputmode="decimal">
+                    <input type="text" class="form-control" id="thMin" maxlength="3" inputmode="decimal">
                     <small class="form-text text-muted" id="helpMin">Minimal SNR</small>
                   </div>
                 </div>
                 <div class="form-group row">
                   <label for="thMin" class="col-md-auto col-form-label">Max:</label>
                   <div class="col-md">
-                    <input type="text" class="form-control" id="thMax"  maxlength="3" inputmode="decimal">
+                    <input type="text" class="form-control" id="thMax" maxlength="3" inputmode="decimal">
                     <small class="form-text text-muted" id="helpMax">Maximal SNR</small>
                   </div>
                 </div>
@@ -126,48 +140,44 @@
                 <label class="font-weight-bold">Select Map Center</label>
                 <div class="form-group">
                   <!-- <label for="centerLat">Latitude:</label> -->
-                  <input type="text" class="form-control" id="centerLat" placeholder="49.8728277" maxlength="11" inputmode="decimal">
+                  <input type="text" class="form-control" id="centerLat" placeholder="49.8728277" maxlength="11"
+                    inputmode="decimal">
                   <small class="form-text text-muted">Latitude</small>
                 </div>
                 <div class="form-group">
                   <!-- <label for="centerLng">Longitude:</label> -->
-                  <input type="text" class="form-control" id="centerLng" placeholder="8.6490228" maxlength="11" inputmode="decimal">
+                  <input type="text" class="form-control" id="centerLng" placeholder="8.6490228" maxlength="11"
+                    inputmode="decimal">
                   <small class="form-text text-muted">Longitude</small>
                 </div>
+                <button class="btn btn-secondary btn-sm" id="btnUpdate">Update Center</button>
               </div>
             </div>
-            
           </div>
-          <button class="btn btn-primary" id="btnUpdate">Update Map</button>
         </div>
-      </div>
+      </div> 
     </div>
 
     <br>
 
-    <h2>heatmap.js Map</h2>
+    <!-- <h2>heatmap.js Map</h2> -->
     <div id="coveragemapid"></div>
-  
+
     <br>
 
-    <button class="btn btn-light" id="btnExample">Show/Hide Example Map</button>
-    <br>
-    <div id="testMap">
-      <h2>Example Map <small>(Just to see how it works)</small></h2>
-      <div id="testmapid"></div>
-    </div>
     
-  </div>
 
-  
-  
 
-  
 
-  <!-- Javascript Datei -->
-  <script src="assets/data/example_data.js"></script>
-  <script src="assets/js/script.js"></script>
-  <script src="assets/js/heatmap.min.js"></script>
-  <script src="assets/js/leaflet-heatmap.js"></script>
+
+
+
+    <!-- Javascript Datei -->
+    <script src="assets/data/demo_data.js"></script>
+    <script src="assets/data/demo_beacons.js"></script>
+    <script src="assets/js/script.js"></script>
+    <script src="assets/js/heatmap.min.js"></script>
+    <script src="assets/js/leaflet-heatmap.js"></script>
 </body>
+
 </html>

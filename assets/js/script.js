@@ -1,142 +1,6 @@
 $( document ).ready(function() {
 
-    // Leaflet
-    var mymap = L.map('testmapid').setView([49.8728277,8.6490228], 13);
-
-    // Load Map Tile
-    L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-        maxZoom: 18,
-        id: 'mapbox/streets-v11', // mapbox/satellite-v9
-        tileSize: 512,
-        zoomOffset: -1,
-        accessToken: 'pk.eyJ1IjoicmVnLWlzIiwiYSI6ImNramg0Nm40ZzR2bGwyemxnOWRsem4xdmwifQ.1kuHM5lWEUiJZCH4JvZVmA'
-    }).addTo(mymap);
-
-
-    // Add Marker
-    var marker = L.marker([49.8728277,8.6490228]).addTo(mymap);
-
-    // Add Circle
-    var circle = L.circle([49.8752301,8.6534799], {
-        color: 'red',
-        fillColor: '#f03',
-        fillOpacity: 0.5,
-        radius: 200
-    }).addTo(mymap);
-
-    // Add Polygon
-    var polygon = L.polygon([
-        [49.872, 8.649],
-        [49.875, 8.65],
-        [49.875, 8.66]
-    ]).addTo(mymap);
-
-    // Add Popup
-    marker.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
-    circle.bindPopup("I am a circle.");
-    polygon.bindPopup("I am a polygon.");
-
-    var popup = L.popup()
-    .setLatLng([49.885, 8.67])
-    .setContent("I am a standalone popup.")
-    .openOn(mymap);
-
-    // Add Tool Tip
-    circle.bindTooltip("my tooltip text").openTooltip();
-
-    // On Click Event
-    function onMapClick(e) {
-        // alert("You clicked the map at " + e.latlng);
-        popup
-            .setLatLng(e.latlng)
-            .setContent("You clicked the map at " + e.latlng)
-            .openOn(mymap);
-    }
-    
-    mymap.on('click', onMapClick);
-
-
-    // Layer Groups 
-    // Tutorial: https://leafletjs.com/examples/layers-control/
-    var daHBF = L.marker([49.872291, 8.629417]),
-        daOstBF = L.marker([49.860452, 8.687782]),
-        daSuedBF = L.marker([49.854033, 8.636799]);
-
-    var bahnhoefe = L.layerGroup([daHBF, daOstBF, daSuedBF]);
-
-    // Layer Control
-    // Tutorial: https://leafletjs.com/examples/layers-control/
-    var streets = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
-            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-            maxZoom: 18,
-            id: 'mapbox/streets-v11',
-            tileSize: 512,
-            zoomOffset: -1,
-            accessToken: 'pk.eyJ1IjoicmVnLWlzIiwiYSI6ImNramg0Nm40ZzR2bGwyemxnOWRsem4xdmwifQ.1kuHM5lWEUiJZCH4JvZVmA'
-            }),
-
-        outdoors = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
-            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-            maxZoom: 18,
-            id: 'mapbox/outdoors-v11',
-            tileSize: 512,
-            zoomOffset: -1,
-            accessToken: 'pk.eyJ1IjoicmVnLWlzIiwiYSI6ImNramg0Nm40ZzR2bGwyemxnOWRsem4xdmwifQ.1kuHM5lWEUiJZCH4JvZVmA'
-            }),
-
-        light = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
-            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-            maxZoom: 18,
-            id: 'mapbox/light-v10',
-            tileSize: 512,
-            zoomOffset: -1,
-            accessToken: 'pk.eyJ1IjoicmVnLWlzIiwiYSI6ImNramg0Nm40ZzR2bGwyemxnOWRsem4xdmwifQ.1kuHM5lWEUiJZCH4JvZVmA'
-            }),
-
-        satellite = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
-            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-            maxZoom: 18,
-            id: 'mapbox/satellite-v9',
-            tileSize: 512,
-            zoomOffset: -1,
-            accessToken: 'pk.eyJ1IjoicmVnLWlzIiwiYSI6ImNramg0Nm40ZzR2bGwyemxnOWRsem4xdmwifQ.1kuHM5lWEUiJZCH4JvZVmA'
-            }),
-        
-        satelliteAndStreet = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
-            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-            maxZoom: 18,
-            id: 'mapbox/satellite-streets-v11',
-            tileSize: 512,
-            zoomOffset: -1,
-            accessToken: 'pk.eyJ1IjoicmVnLWlzIiwiYSI6ImNramg0Nm40ZzR2bGwyemxnOWRsem4xdmwifQ.1kuHM5lWEUiJZCH4JvZVmA'
-            });
-
-    mymap.layers = [streets, outdoors, light, satellite, satelliteAndStreet];
-
-    var baseMaps = {
-        "Straßen": streets,
-        "Outdoor": outdoors,
-        "Hell": light,
-        "Satellit": satellite,
-        "Satellit und Straßen": satelliteAndStreet
-    };
-    
-    var overlayMaps = {
-        "Bahnhöfe": bahnhoefe
-    };
-
-    L.control.layers(baseMaps, overlayMaps).addTo(mymap);
-
-
     // heatmap.js Coverage Map
-
-
-    var testData2 = {
-        max: 20,
-        min: 0,
-        data: data
-      };
       
     var baseLayer = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
@@ -152,7 +16,10 @@ $( document ).ready(function() {
         "absolute": true,
         // radius should be small ONLY if scaleRadius is true (or small radius is intended)
         // if scaleRadius is false it will be the constant radius used in pixels
-        "radius": 0.005,
+        "radius": 0.018,
+        // The blur factor that will be applied to all datapoints.
+        // The higher the blur factor is, the smoother the gradients will be
+        "blur":0.85,
         "maxOpacity": .8,
         // scales the radius based on map zoom
         "scaleRadius": true,
@@ -179,24 +46,18 @@ $( document ).ready(function() {
     var heatmapLayerSNR = new HeatmapOverlay(setConfig(cfg, "snr"));
     var heatmapLayerRSSI = new HeatmapOverlay(setConfig(cfg, "rssi"));
 
-    var overlayLayers = {
-        "Coverage Map SNR": heatmapLayerSNR,
-        "Coverage Map RSSI": heatmapLayerRSSI
-    };
-
-
     var mycoveragemap = new L.Map('coveragemapid', {
         center: new L.LatLng(49.8728277, 8.6490228),
-        zoom: 12,
+        zoom: 13,
         layers: [baseLayer, heatmapLayerSNR] //Default layers
     });
     
-
-    var layerControl = new L.control.layers(null, overlayLayers).addTo(mycoveragemap);
+    // Add Layer Control to map
+    var layerControl = new L.control.layers(null, null).addTo(mycoveragemap);
     layerControl.addBaseLayer(baseLayer, "Mapbox Light");
-    //layerControl.addOverlay(heatmapLayerSNR, "heatmap SNR");
-    //layerControl.addOverlay(heatmapLayerRSSI, "heatmap RSSI");
-    //L.control.layers(baseLayer, null).addTo(mycoveragemap);
+
+    // Load recorded beacon data 
+    var data = demoData;
 
     heatmapLayerSNR.setData({min: 0, max: 20, data: data});
     heatmapLayerRSSI.setData({min: 50, max: 90, data: data});
@@ -242,8 +103,8 @@ $( document ).ready(function() {
     //Default threshold values, min and max
     var minSNR = 0;
     var maxSNR = 20;
-    var minRSSI = 50;
-    var maxRSSI = 90;
+    var minRSSI = -90;
+    var maxRSSI = -50;
     $("#thMin").val(minSNR);
     $("#thMax").val(maxSNR);
 
@@ -288,6 +149,35 @@ $( document ).ready(function() {
         }
     });
 
+    // set Marker on beacon locations
+    function setMarker(beaconLocations){
+        var beaconMarkers = [];
+        if(beaconLocations && (typeof beaconLocations === "object")){
+            Object.keys(beaconLocations).forEach(element =>{
+                var thisBeaconID = beaconLocations[element].beaconID;
+                var thisBeaconDescription = beaconLocations[element].description;
+                var marker = L
+                    .marker([beaconLocations[element].latitude, beaconLocations[element].longitude])
+                    .bindTooltip(`<b>Beacon ${thisBeaconID}</b> <br> ${thisBeaconDescription}`);
+                beaconMarkers.push(marker);
+            });
+        }
+        return L.layerGroup(beaconMarkers);
+    }
+
+    var beaconMarkers = setMarker(demoBeacons);
+
+    // On display beacons location
+    $("#beaconSwitch").click(function(){
+        if($(this).is(':checked')){
+            $("#beaconSwitchLabel").text("On")
+             mycoveragemap.addLayer(beaconMarkers);
+        } else {
+            $("#beaconSwitchLabel").text("Off")
+            mycoveragemap.removeLayer(beaconMarkers);
+        }
+    })
+
     // On min threshold input change
     $("#thMin").on("input", function(){
         if(dataShown === "SNR"){
@@ -318,12 +208,10 @@ $( document ).ready(function() {
         console.log("changing max th worked")
     });
 
-
-    // Read data from filter options on button click
-    $("#btnUpdate").click(function(){
-
+    // On beacon change beacon 
+    $("#beaconID").on('change', function(){
         // Select beacon to display on coverage map
-        var newSelectedID = Number($("#beaconID").val());
+        var newSelectedID = Number(this.value);
         if (newSelectedID != selectedID){
             currentData = filterByID(data, newSelectedID);
             heatmapLayerSNR.setData({min: minSNR, max: maxSNR, data: currentData});
@@ -331,6 +219,10 @@ $( document ).ready(function() {
             console.log(`Filter: Changed coverage map from beaconID ${ selectedID} to ${newSelectedID}`);
             selectedID = newSelectedID;
         }
+    })
+
+    // Read data for map center on button click
+    $("#btnUpdate").click(function(){
 
         // Select map center
         if (!$("#centerLat").val() || !$("#centerLng").val()){
@@ -338,28 +230,6 @@ $( document ).ready(function() {
         } else {
             mycoveragemap.setView([$("#centerLat").val(), $("#centerLng").val()], 12); // or flyTo instead of setView
         }
-
-        // Select data type to display on Map 
-        var dataType = $("input[name='dataRadio']:checked").val();
-        if (dataType == "SNR"){
-            mycoveragemap.removeLayer(heatmapLayerRSSI);
-            mycoveragemap.addLayer(heatmapLayerSNR);
-            dataShown = "SNR";
-        }else if (dataType == "RSSI"){
-            mycoveragemap.removeLayer(heatmapLayerSNR);
-            mycoveragemap.addLayer(heatmapLayerRSSI);
-            dataShown = "RSSI";
-        }
-        
       });
  
-    
-
-   // Show and Hide Example map
-   $("#testMap").hide();
-   $("#btnExample").click(function(){
-        $("#testMap").toggle();
-   });
-    
-
 });
