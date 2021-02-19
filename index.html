@@ -33,10 +33,7 @@
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
     integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
 
-  <!-- Bootstrap 4 -->
-  <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script> -->
+  <!-- Bootstrap 4.5 -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -45,6 +42,7 @@
 
 <body>
 
+  <!-- Header -->
   <div class="jumbotron jumbotron-fluid">
     <div class="container-fluid">
       <h1>LoRa Coverage Map</h1>
@@ -56,16 +54,10 @@
 
   <div class="container-fluid">
 
-    <!-- <p>Deine smarte <a href="https://my.makesmart.net/">Community</a>.</p>
-  
-    <i class="fa fa-star"></i>
-    <br />
-    <a href="https://my.makesmart.net/"><button type="button" class="btn btn-primary">Join</button></a> -->
-
-
+    <!-- Map Filter Options -->
     <div class="card">
       <h5 class="card-header">
-        <!-- Colapsable Card based on https://disjfa.github.io/bootstrap-tricks/card-collapse-tricks/ -->
+        <!-- Collapsible Card based on https://disjfa.github.io/bootstrap-tricks/card-collapse-tricks/ -->
         <a data-toggle="collapse" href="#collapse-filter" aria-expanded="true" aria-controls="collapse-filter"
           id="heading-filter" class="d-block">
           <i class="fa fa-chevron-down pull-right"></i>
@@ -75,6 +67,20 @@
       <div id="collapse-filter" class="collapse show" aria-labelledby="heading-filter">
         <div class="card-body">
           <div class="card-columns">
+            <!-- Form: Select data path -->
+            <div class="card bg-light">
+              <div class="card-body">
+                <label class="font-weight-bold">Select data path</label>
+                <div class="form-group">
+                  <input type="text" class="form-control" id="dataPath" placeholder="https://my.api.example.com/json" value="http://raspberrypi.local/api/getData.php"
+                    inputmode="url">
+                  <small class="text-danger" id="dataPathAlert"></small>
+                  <small class="form-text text-muted">URL to JSON signal data. If empty demo data is used.<br>E.g. https://my.api.mockaroo.com/lora_signal_data_v2.json?key=28f08840</small>
+                </div>
+                <button class="btn btn-primary btn-sm" id="btnLoadData">Load Data</button>
+                <button class="btn btn-outline-secondary btn-sm" id="btnResetData">Reset</button>
+              </div>
+            </div>
             <!-- Form: Select Beacon to display -->
             <div class="card bg-light">
               <div class="card-body">
@@ -95,7 +101,7 @@
                 </div>
               </div>
             </div>
-            <!-- Form Select Data to display -->
+            <!-- Form: Select Data to display -->
             <div class="card bg-light">
               <div class="card-body">
                 <label class="font-weight-bold">Select Data to display</label>
@@ -114,7 +120,7 @@
                 </div>
               </div>
             </div>
-            <!-- Form : Select min and max -->
+            <!-- Form: Select min and max -->
             <div class="card bg-light">
               <div class="card-body">
                 <label class="font-weight-bold">Select threshold values</label>
@@ -139,45 +145,37 @@
               <div class="card-body">
                 <label class="font-weight-bold">Select Map Center</label>
                 <div class="form-group">
-                  <!-- <label for="centerLat">Latitude:</label> -->
                   <input type="text" class="form-control" id="centerLat" placeholder="49.8728277" maxlength="11"
                     inputmode="decimal">
                   <small class="form-text text-muted">Latitude</small>
                 </div>
                 <div class="form-group">
-                  <!-- <label for="centerLng">Longitude:</label> -->
                   <input type="text" class="form-control" id="centerLng" placeholder="8.6490228" maxlength="11"
                     inputmode="decimal">
                   <small class="form-text text-muted">Longitude</small>
                 </div>
-                <button class="btn btn-secondary btn-sm" id="btnUpdate">Update Center</button>
+                <button class="btn btn-primary btn-sm" id="btnUpdate">Update Center</button>
               </div>
             </div>
           </div>
         </div>
-      </div> 
+      </div>
     </div>
 
     <br>
 
-    <!-- <h2>heatmap.js Map</h2> -->
+    <!-- Coverage Map -->
     <div id="coveragemapid"></div>
 
     <br>
+  </div>
 
-    
-
-
-
-
-
-
-    <!-- Javascript Datei -->
-    <script src="assets/data/demo_data.js"></script>
-    <script src="assets/data/demo_beacons.js"></script>
-    <script src="assets/js/script.js"></script>
-    <script src="assets/js/heatmap.min.js"></script>
-    <script src="assets/js/leaflet-heatmap.js"></script>
+  <!-- Javascript Files -->
+  <script src="assets/data/demo_data.js"></script>
+  <script src="assets/data/demo_beacons.js"></script>
+  <script src="assets/js/script.js"></script>
+  <script src="assets/js/heatmap.min.js"></script>
+  <script src="assets/js/leaflet-heatmap.js"></script>
 </body>
 
 </html>

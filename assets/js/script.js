@@ -1,7 +1,9 @@
 $( document ).ready(function() {
 
-    // heatmap.js Coverage Map
-      
+
+    /************************** Heat map set up ************************/
+
+    // Leaflet base layer with OpenStreetMap for background 
     var baseLayer = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
         maxZoom: 18,
@@ -43,9 +45,11 @@ $( document ).ready(function() {
         return newConfig;
     }
 
+    // Create separate heat map layers for SNR and RSSI
     var heatmapLayerSNR = new HeatmapOverlay(setConfig(cfg, "snr"));
     var heatmapLayerRSSI = new HeatmapOverlay(setConfig(cfg, "rssi"));
 
+    // Create leaflet map
     var mycoveragemap = new L.Map('coveragemapid', {
         center: new L.LatLng(49.8728277, 8.6490228),
         zoom: 13,
@@ -56,13 +60,11 @@ $( document ).ready(function() {
     var layerControl = new L.control.layers(null, null).addTo(mycoveragemap);
     layerControl.addBaseLayer(baseLayer, "Mapbox Light");
 
-    // Load recorded beacon data 
-    var data = demoData;
 
-    heatmapLayerSNR.setData({min: 0, max: 20, data: data});
-    heatmapLayerRSSI.setData({min: 50, max: 90, data: data});
+    /************************** Functions ************************/
 
-    //Get array of Beacon ids
+
+    // Get array of beacon ids
     function getBeaconIDs(rawData) {
         var beaconIDs = [];
 
@@ -75,7 +77,7 @@ $( document ).ready(function() {
         return beaconIDs.sort(function(a, b){return a - b});
     }
 
-    //Filter data with beacon id
+    // Filter data with beacon id
     function filterByID(rawData, beaconID) {
         var filteredData = [];
         if(rawData && (typeof rawData === "object")){
@@ -88,68 +90,7 @@ $( document ).ready(function() {
         return filteredData;
     }
 
-    //Add list of Beacon IDs to from
-    var beaconIDs = getBeaconIDs(data);
-    beaconIDs.forEach(id =>{
-        $("#beaconID").append(`<option value="${id}">Beacon ${id}</option>`);
-    });
-
-    // variable with the currently selected beaconID
-    var selectedID = getBeaconIDs(data)[0];
-
-    // variable with the currently selected Data Type
-    var dataShown = "SNR";
-
-    //Default threshold values, min and max
-    var minSNR = 0;
-    var maxSNR = 20;
-    var minRSSI = -90;
-    var maxRSSI = -50;
-    $("#thMin").val(minSNR);
-    $("#thMax").val(maxSNR);
-
-    // Default heatmap
-    var currentData = filterByID(data, selectedID);
-    heatmapLayerSNR.setData({min: minSNR, max: maxSNR, data: currentData});
-    heatmapLayerRSSI.setData({min: minRSSI, max: maxRSSI, data: currentData});
-
-    // On radio button change
-    $('input[type=radio][name=dataRadio]').change(function() {
-        if (this.value == 'SNR') {
-            // Change Min and Max value
-            $("#thMin").val(minSNR);
-            $("#thMax").val(maxSNR);
-
-            // Change help text
-            $("#helpMin").text("Minimal SNR");
-            $("#helpMax").text("Maximal SNR");
-
-            //Change heat map to SNR
-            mycoveragemap.removeLayer(heatmapLayerRSSI);
-            mycoveragemap.addLayer(heatmapLayerSNR);
-
-            //Change dataShown variable
-            dataShown = "SNR";
-        }
-        else if (this.value == 'RSSI') {
-            // Change Min and Max value
-            $("#thMin").val(minRSSI);
-            $("#thMax").val(maxRSSI);
-
-            // Change help text
-            $("#helpMin").text("Minimal RSSI");
-            $("#helpMax").text("Maximal RSSI");
-
-            //Change heat map to RSSI
-            mycoveragemap.removeLayer(heatmapLayerSNR);
-            mycoveragemap.addLayer(heatmapLayerRSSI);
-
-            //Change dataShown variable
-            dataShown = "RSSI";
-        }
-    });
-
-    // set Marker on beacon locations
+    // Add markers to map on beacon locations
     function setMarker(beaconLocations){
         var beaconMarkers = [];
         if(beaconLocations && (typeof beaconLocations === "object")){
@@ -165,7 +106,155 @@ $( document ).ready(function() {
         return L.layerGroup(beaconMarkers);
     }
 
+    // Add all available beacon IDs to drop down menu
+    function addBeaconMenu(data){
+        var _beaconIDs = getBeaconIDs(currentData);
+        $("#beaconID").empty();
+        _beaconIDs.forEach(id =>{
+            $("#beaconID").append(`<option value="${id}">Beacon ${id}</option>`);
+         });
+    }
+    
+
+    /************************** Variables ************************/
+
+
+    // Variable for the currently selected Data Type
+    var currentDataType = "SNR";
+
+    // Variables for threshold values, min and max
+    var minSNR = 0;
+    var maxSNR = 20;
+    var minRSSI = -90;
+    var maxRSSI = -50;
+    $("#thMin").val(minSNR);
+    $("#thMax").val(maxSNR);
+
+    // Variable for the currently selected data
+    var currentData = demoData;
+
+    // Variable for the currently selected beaconID
+    var currentID = getBeaconIDs(currentData)[0];
+
+    // Variable for the currently selected data filtered for the selected beacon
+    var currentDataFiltered = filterByID(currentData, currentID);
+
+
+    /************************** Initializing map and filter options  ************************/
+
+
+    // Display default heat map
+    heatmapLayerSNR.setData({min: minSNR, max: maxSNR, data: currentDataFiltered});
+    heatmapLayerRSSI.setData({min: minRSSI, max: maxRSSI, data: currentDataFiltered});
+
+    // Add list of beacon IDs to drop down menu
+    addBeaconMenu(currentData);
+
+    // Add markers for beacon locations on map
     var beaconMarkers = setMarker(demoBeacons);
+
+
+    /************************** Filter options listener ************************/
+
+
+    // Read file path on "Load Data" button click
+    $("#btnLoadData").click(function(){
+        // File path given in user input
+        var filePath = $("#dataPath").val();
+        // Reset visual feedback
+        $("#dataPath").attr('class', 'form-control');
+        $("#dataPathAlert").text("");
+        
+        if(filePath) {// Checks if a file path is given
+            // Load JSON
+            $.getJSON(filePath, function() {
+            })
+            .done(function(responseData) { // New data found
+                currentData = responseData;
+
+                // Add all available beacon IDs to drop down menu
+                addBeaconMenu(currentData);
+
+                // Set displayed beaconID to first in list
+                currentID = getBeaconIDs(currentData)[0];
+
+                // Display loaded data in map 
+                currentDataFiltered = filterByID(responseData, currentID);
+                heatmapLayerSNR.setData({min: minSNR, max: maxSNR, data: currentDataFiltered});
+                heatmapLayerRSSI.setData({min: minRSSI, max: maxRSSI, data: currentDataFiltered});
+                
+                // Change visual feedback
+                $("#dataPathAlert").text("");
+                $("#dataPath").attr('class', 'form-control is-valid');
+            })
+            .fail(function(){
+                // Change visual feedback
+                $("#dataPathAlert").text("Loading JSON from path failed.");
+                $("#dataPath").attr('class', 'form-control is-invalid');
+            })  
+        } else { // If no input given
+            // Change visual feedback
+            $("#dataPathAlert").text("Please enter URL path.");
+            $("#dataPath").attr('class', 'form-control is-invalid');
+        }
+    });
+
+    // Reset to demo data on "Reset" button click
+    $("#btnResetData").click(function(){
+        currentData = demoData;
+        
+        // Reset visual feedback
+        $("#dataPath").val("");
+        $("#dataPath").attr('class', 'form-control');
+        $("#dataPathAlert").text("");
+
+        // Add all available beacon IDs to drop down menu
+        addBeaconMenu(currentData);
+
+        // Set displayed beaconID to first in list
+        currentID = getBeaconIDs(currentData)[0];
+
+        // Display demo data in map
+        currentDataFiltered = filterByID(demoData, currentID);
+        heatmapLayerSNR.setData({min: minSNR, max: maxSNR, data: currentDataFiltered});
+        heatmapLayerRSSI.setData({min: minRSSI, max: maxRSSI, data: currentDataFiltered});
+    });
+
+    // On radio button change (data type)
+    $('input[type=radio][name=dataRadio]').change(function() {
+        if (this.value == 'SNR') {
+            // Change Min and Max value
+            $("#thMin").val(minSNR);
+            $("#thMax").val(maxSNR);
+
+            // Change help text
+            $("#helpMin").text("Minimal SNR");
+            $("#helpMax").text("Maximal SNR");
+
+            //Change heat map to SNR
+            mycoveragemap.removeLayer(heatmapLayerRSSI);
+            mycoveragemap.addLayer(heatmapLayerSNR);
+
+            //Change dataShown variable
+            currentDataType = "SNR";
+        }
+        else if (this.value == 'RSSI') {
+            // Change Min and Max value
+            $("#thMin").val(minRSSI);
+            $("#thMax").val(maxRSSI);
+
+            // Change help text
+            $("#helpMin").text("Minimal RSSI");
+            $("#helpMax").text("Maximal RSSI");
+
+            //Change heat map to RSSI
+            mycoveragemap.removeLayer(heatmapLayerSNR);
+            mycoveragemap.addLayer(heatmapLayerRSSI);
+
+            //Change dataShown variable
+            currentDataType = "RSSI";
+        }
+    });
 
     // On display beacons location
     $("#beaconSwitch").click(function(){
@@ -180,13 +269,13 @@ $( document ).ready(function() {
 
     // On min threshold input change
     $("#thMin").on("input", function(){
-        if(dataShown === "SNR"){
+        if(currentDataType === "SNR"){
             minSNR = $("#thMin").val();
-            heatmapLayerSNR.setData({min: minSNR, max: maxSNR, data: currentData});
+            heatmapLayerSNR.setData({min: minSNR, max: maxSNR, data: currentDataFiltered});
             //heatmapLayerSNR.setDataMin(minSNR);
-        } else if(dataShown === "RSSI"){
+        } else if(currentDataType === "RSSI"){
             minRSSI = $("#thMin").val();
-            heatmapLayerRSSI.setData({min: minRSSI, max: maxRSSI, data: currentData});
+            heatmapLayerRSSI.setData({min: minRSSI, max: maxRSSI, data: currentDataFiltered});
             // heatmapLayerRSSI.setDataMin(minRSSI);
         } else console.warn("Value for dataShown is not SNR or RSSI");
         console.log("changing min th worked")
@@ -194,15 +283,15 @@ $( document ).ready(function() {
 
     // On max threshold input change
     $("#thMax").on("input", function(){
-        if(dataShown === "SNR"){
+        if(currentDataType === "SNR"){
             maxSNR = $("#thMax").val();
-            heatmapLayerSNR.setData({min: minSNR, max: maxSNR, data: currentData});
+            heatmapLayerSNR.setData({min: minSNR, max: maxSNR, data: currentDataFiltered});
             //var currentData = heatmapLayerSNR.getData();
             //heatmapLayerSNR.setDataMax(maxSNR);
             //heatmapLayerSNR.setDataMax(5);
-        } else if(dataShown === "RSSI"){
+        } else if(currentDataType === "RSSI"){
             maxRSSI = $("#thMax").val();
-            heatmapLayerRSSI.setData({min: minRSSI, max: maxRSSI, data: currentData});
+            heatmapLayerRSSI.setData({min: minRSSI, max: maxRSSI, data: currentDataFiltered});
             // heatmapLayerRSSI.setDataMax(maxRSSI);
         } else console.warn("Value for dataShown is not SNR or RSSI");
         console.log("changing max th worked")
@@ -212,24 +301,23 @@ $( document ).ready(function() {
     $("#beaconID").on('change', function(){
         // Select beacon to display on coverage map
         var newSelectedID = Number(this.value);
-        if (newSelectedID != selectedID){
-            currentData = filterByID(data, newSelectedID);
-            heatmapLayerSNR.setData({min: minSNR, max: maxSNR, data: currentData});
-            heatmapLayerRSSI.setData({min: minRSSI, max: maxRSSI, data: currentData});
-            console.log(`Filter: Changed coverage map from beaconID ${ selectedID} to ${newSelectedID}`);
-            selectedID = newSelectedID;
+        if (newSelectedID != currentID){
+            currentDataFiltered = filterByID(currentData, newSelectedID);
+            heatmapLayerSNR.setData({min: minSNR, max: maxSNR, data: currentDataFiltered});
+            heatmapLayerRSSI.setData({min: minRSSI, max: maxRSSI, data: currentDataFiltered});
+            console.log(`Filter: Changed coverage map from beaconID ${ currentID} to ${newSelectedID}`);
+            currentID = newSelectedID;
         }
     })
 
     // Read data for map center on button click
     $("#btnUpdate").click(function(){
-
         // Select map center
         if (!$("#centerLat").val() || !$("#centerLng").val()){
             console.log("Filter: At least one center coordinate is empty")
         } else {
             mycoveragemap.setView([$("#centerLat").val(), $("#centerLng").val()], 12); // or flyTo instead of setView
         }
-      });
+    });
  
 });
